@@ -1,51 +1,361 @@
-```html
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>诗歌意象训练 Quiz（逐题100题）</title>
+
 <style>
-body{font-family:"Microsoft YaHei",sans-serif;background:#f5f6fa;text-align:center;padding:40px;}
-.card{background:#fff;padding:30px;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.1);max-width:760px;margin:auto;}
-.score{font-size:20px;font-weight:bold;margin-bottom:10px;}
-.title{font-size:22px;font-weight:bold;margin-bottom:10px;}
-.poem{font-size:18px;margin:18px 0;line-height:1.6;}
-.options{text-align:left;display:inline-block;margin-top:6px;}
-label{display:block;margin:6px 0;}
-button{margin-top:18px;padding:10px 26px;font-size:16px;border:none;border-radius:8px;background:#6c5ce7;color:#fff;cursor:pointer;}
-button:hover{background:#5649c0;}
-.feedback{margin-top:12px;font-size:18px;font-weight:bold;min-height:24px;}
-.small{font-size:13px;color:#666;margin-top:6px;}
+:root{
+  --bg1:#0f172a;
+  --bg2:#111827;
+  --card:#0b1220cc;
+  --card2:#0b1220;
+  --line:#23314f;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --accent:#8b5cf6;
+  --accent2:#22c55e;
+  --bad:#ef4444;
+  --warn:#f59e0b;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:28px;
+  font-family:"Microsoft YaHei", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 700px at 15% 10%, #3b82f633, transparent 60%),
+    radial-gradient(900px 600px at 90% 20%, #a855f733, transparent 55%),
+    radial-gradient(900px 600px at 40% 110%, #22c55e22, transparent 55%),
+    linear-gradient(160deg, var(--bg1), var(--bg2));
+}
+
+.shell{
+  width:min(980px, 100%);
+  display:grid;
+  gap:16px;
+}
+
+.topbar{
+  display:flex;
+  gap:12px;
+  align-items:stretch;
+  flex-wrap:wrap;
+}
+
+.pill{
+  flex:1 1 280px;
+  background:linear-gradient(180deg, #0b1220cc, #0b1220aa);
+  border:1px solid #1f2a44;
+  border-radius:16px;
+  padding:14px 16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
+
+.pill .label{
+  font-size:12px;
+  color:var(--muted);
+  letter-spacing:.2px;
+}
+.pill .value{
+  font-size:20px;
+  font-weight:800;
+  margin-top:6px;
+  display:flex;
+  gap:10px;
+  align-items:baseline;
+}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:12px;
+  border:1px solid #2a3a5f;
+  color:#cbd5e1;
+  background:#0b1220;
+}
+
+.card{
+  background:linear-gradient(180deg, #0b1220dd, #0b1220bb);
+  border:1px solid #1f2a44;
+  border-radius:18px;
+  box-shadow:0 18px 50px rgba(0,0,0,.35);
+  overflow:hidden;
+}
+
+.header{
+  padding:18px 18px 12px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  gap:14px;
+  align-items:flex-start;
+  justify-content:space-between;
+  flex-wrap:wrap;
+}
+.h-left{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.qnum{
+  font-size:18px;
+  font-weight:900;
+}
+.meta{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.meta .chip{
+  font-size:12px;
+  color:#d1d5db;
+  border:1px solid #2a3a5f;
+  background:#0b1220;
+  padding:4px 10px;
+  border-radius:999px;
+}
+.h-right{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.progressWrap{
+  width:220px;
+  height:10px;
+  background:#0b1220;
+  border:1px solid #25365c;
+  border-radius:999px;
+  overflow:hidden;
+}
+.progress{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg, var(--accent), #60a5fa);
+}
+
+.content{
+  padding:18px;
+  display:grid;
+  gap:14px;
+}
+
+.prompt{
+  background:linear-gradient(180deg, #0b1220, #0b1220cc);
+  border:1px solid #24355b;
+  border-radius:16px;
+  padding:14px 14px;
+}
+.prompt .img{
+  font-size:15px;
+  color:#dbeafe;
+  font-weight:800;
+  margin-bottom:6px;
+}
+.prompt .poem{
+  font-size:17px;
+  line-height:1.7;
+  color:#e5e7eb;
+}
+
+.options{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:10px;
+}
+@media (max-width:720px){
+  .options{grid-template-columns:1fr;}
+  .progressWrap{width:160px;}
+}
+
+.opt{
+  border:1px solid #25365c;
+  background:#0b1220;
+  padding:12px 12px;
+  border-radius:14px;
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  cursor:pointer;
+  transition:.15s transform, .15s border-color, .15s background;
+}
+.opt:hover{
+  transform:translateY(-1px);
+  border-color:#3b4f7d;
+  background:#0b1220cc;
+}
+.opt input{
+  margin-top:2px;
+  width:18px;
+  height:18px;
+  accent-color:var(--accent);
+}
+.opt span{
+  font-size:14px;
+  color:#e5e7eb;
+  line-height:1.4;
+}
+
+.footer{
+  padding:14px 18px 18px;
+  border-top:1px solid var(--line);
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.btn{
+  border:none;
+  border-radius:12px;
+  padding:10px 14px;
+  font-size:14px;
+  font-weight:800;
+  cursor:pointer;
+  transition:.15s transform, .15s filter;
+}
+.btn:active{transform:translateY(1px);}
+.btn-primary{
+  color:white;
+  background:linear-gradient(90deg, var(--accent), #60a5fa);
+}
+.btn-ghost{
+  color:#cbd5e1;
+  background:#0b1220;
+  border:1px solid #2a3a5f;
+}
+.btn:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+  filter:grayscale(.2);
+}
+
+.feedback{
+  flex:1 1 280px;
+  min-height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+  color:#e5e7eb;
+  font-weight:800;
+}
+.note{
+  font-weight:700;
+  color:#d1d5db;
+  font-size:13px;
+  margin-top:2px;
+}
+.fbBox{
+  width:100%;
+  background:#0b1220;
+  border:1px dashed #2a3a5f;
+  border-radius:14px;
+  padding:12px 12px;
+  display:none;
+}
+.fbRow{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  justify-content:space-between;
+  flex-wrap:wrap;
+}
+.fbTitle{
+  font-weight:900;
+}
+.correct{color:var(--accent2);}
+.wrong{color:var(--bad);}
+.answerLine{
+  margin-top:8px;
+  color:#dbeafe;
+  font-weight:800;
+}
+.answerLine .muted{
+  color:var(--muted);
+  font-weight:700;
+}
 </style>
 </head>
+
 <body>
+<div class="shell">
 
-<div class="card">
-  <div class="score">得分：<span id="score">0</span> / 100</div>
-  <div class="small">规则：多选；必须与标准答案完全一致才得 1 分；逐题作答。</div>
+  <div class="topbar">
+    <div class="pill">
+      <div class="label">当前得分</div>
+      <div class="value"><span id="score">0</span><span class="badge">满分 100</span></div>
+    </div>
+    <div class="pill">
+      <div class="label">进度</div>
+      <div class="value"><span id="done">0</span><span class="badge">/ 100 题</span></div>
+      <div class="note">提示：多选需完全一致才算对。</div>
+    </div>
+  </div>
 
-  <div class="title" id="qnum"></div>
-  <div class="poem" id="question"></div>
+  <div class="card">
+    <div class="header">
+      <div class="h-left">
+        <div class="qnum" id="qnum">第 1 题</div>
+        <div class="meta">
+          <span class="chip" id="tagImg">意象：—</span>
+          <span class="chip">选择诗歌类型（可多选）</span>
+        </div>
+      </div>
+      <div class="h-right">
+        <div class="progressWrap" aria-label="progress">
+          <div class="progress" id="progress"></div>
+        </div>
+      </div>
+    </div>
 
-  <div class="options" id="options"></div>
+    <div class="content">
+      <div class="prompt">
+        <div class="img" id="imgLine">【意象：—】</div>
+        <div class="poem" id="poemLine">—</div>
+      </div>
 
-  <div class="feedback" id="feedback"></div>
+      <div class="options" id="options"></div>
 
-  <button onclick="nextQuestion()">下一题</button>
+      <div class="fbBox" id="fbBox">
+        <div class="fbRow">
+          <div class="fbTitle" id="fbTitle">—</div>
+          <div id="fbPlus"></div>
+        </div>
+        <div class="answerLine" id="ansLine"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="actions">
+        <button class="btn btn-ghost" id="btnClear" onclick="clearSelection()">清空选择</button>
+        <button class="btn btn-primary" id="btnCheck" onclick="checkAnswer()">提交本题</button>
+        <button class="btn btn-ghost" id="btnNext" onclick="nextQuestion()" disabled>下一题</button>
+      </div>
+      <div class="feedback" id="quickFb"></div>
+    </div>
+  </div>
+
 </div>
 
 <script>
 const TYPES = [
-  "羁旅思乡诗",
-  "边塞征战诗",
-  "山水田园诗",
-  "咏史怀古诗",
-  "爱情闺怨诗",
-  "咏物言志诗",
-  "送别怀人诗",
-  "爱国忧民诗",
-  "干谒求荐诗",
-  "童真稚趣诗"
+  "羁旅思乡诗","边塞征战诗","山水田园诗","咏史怀古诗","爱情闺怨诗",
+  "咏物言志诗","送别怀人诗","爱国忧民诗","干谒求荐诗","童真稚趣诗"
 ];
 
 const QUESTIONS = [
@@ -152,59 +462,130 @@ const QUESTIONS = [
 ];
 
 if (QUESTIONS.length !== 100) {
-  alert("⚠ 题目数量不是100题，请检查 QUESTIONS！");
+  alert("⚠ 题目数量不是100题，请检查 QUESTIONS！当前：" + QUESTIONS.length);
 }
 
+/* ======= 状态 ======= */
 let index = 0;
 let score = 0;
+let locked = false;
 
+/* ======= 渲染 ======= */
 function renderOptions(){
-  const optionsDiv = document.getElementById("options");
-  let html = "";
-  TYPES.forEach(t => {
-    html += `<label><input type="checkbox" value="${t}"> ${t}</label>`;
+  const box = document.getElementById("options");
+  box.innerHTML = "";
+  TYPES.forEach((t, i) => {
+    const lab = document.createElement("label");
+    lab.className = "opt";
+    lab.innerHTML = `<input type="checkbox" value="${t}"><span>${t}</span>`;
+    box.appendChild(lab);
   });
-  optionsDiv.innerHTML = html;
+}
+
+function updateProgress(){
+  const done = index; // 已完成题数
+  document.getElementById("done").innerText = done;
+  const pct = Math.round((done/100)*100);
+  document.getElementById("progress").style.width = pct + "%";
 }
 
 function loadQuestion(){
-  if(index >= QUESTIONS.length){
-    alert("训练结束 ✅ 你的得分：" + score + " / 100");
-    return;
-  }
+  locked = false;
+  document.getElementById("btnCheck").disabled = false;
+  document.getElementById("btnNext").disabled = true;
+
   const q = QUESTIONS[index];
-  document.getElementById("qnum").innerText = "第 " + (index + 1) + " 题";
-  document.getElementById("question").innerHTML = "【意象：" + q.image + "】<br>" + q.poem;
-  document.getElementById("feedback").innerText = "";
+  document.getElementById("qnum").innerText = `第 ${index + 1} 题`;
+  document.getElementById("tagImg").innerText = `意象：${q.image}`;
+  document.getElementById("imgLine").innerText = `【意象：${q.image}】`;
+  document.getElementById("poemLine").innerText = q.poem;
+
+  document.getElementById("quickFb").innerText = "";
+  const fbBox = document.getElementById("fbBox");
+  fbBox.style.display = "none";
+  document.getElementById("fbTitle").innerText = "";
+  document.getElementById("fbPlus").innerText = "";
+  document.getElementById("ansLine").innerText = "";
+
   renderOptions();
+  updateProgress();
 }
 
-function nextQuestion(){
+function clearSelection(){
+  if (locked) return;
+  document.querySelectorAll('#options input[type="checkbox"]').forEach(x => x.checked = false);
+}
+
+/* ======= 判题 ======= */
+function getChecked(){
+  return [...document.querySelectorAll('#options input[type="checkbox"]:checked')]
+    .map(x => x.value).sort();
+}
+
+function checkAnswer(){
+  if (locked) return;
+
   const q = QUESTIONS[index];
-  const checked = [...document.querySelectorAll("input:checked")].map(x => x.value).sort();
+  const checked = getChecked();
   const correct = [...q.answer].sort();
 
-  if(JSON.stringify(checked) === JSON.stringify(correct)){
+  locked = true;
+  document.getElementById("btnCheck").disabled = true;
+  document.getElementById("btnNext").disabled = false;
+
+  const fbBox = document.getElementById("fbBox");
+  fbBox.style.display = "block";
+
+  const isRight = JSON.stringify(checked) === JSON.stringify(correct);
+
+  if (isRight){
     score++;
-    document.getElementById("feedback").innerText = "✅ 正确 +1";
+    document.getElementById("score").innerText = score;
+
+    document.getElementById("quickFb").innerHTML = `<span class="correct">✅ 正确 +1</span>`;
+    document.getElementById("fbTitle").innerHTML = `<span class="correct">✅ 本题正确</span>`;
+    document.getElementById("fbPlus").innerHTML = `<span class="badge">+1 分</span>`;
+    document.getElementById("ansLine").innerHTML =
+      `<span class="muted">正确答案：</span>${correct.join("、")}`;
   } else {
-    document.getElementById("feedback").innerText = "❌ 错误（本题不得分）";
+    document.getElementById("quickFb").innerHTML = `<span class="wrong">❌ 错误</span>`;
+    document.getElementById("fbTitle").innerHTML = `<span class="wrong">❌ 本题错误</span>`;
+    document.getElementById("fbPlus").innerHTML = `<span class="badge" style="border-color:#4b2a2a;color:#fecaca;">0 分</span>`;
+
+    const your = checked.length ? checked.join("、") : "（未选择）";
+    document.getElementById("ansLine").innerHTML =
+      `<div><span class="muted">你的选择：</span>${your}</div>
+       <div style="margin-top:6px;"><span class="muted">正确答案：</span>${correct.join("、")}</div>`;
   }
 
-  document.getElementById("score").innerText = score;
-  index++;
+  // 满分结束（按你规则：得满100分就结束）
+  if (score === 100){
+    setTimeout(() => {
+      alert("训练完成 ✅ 已达到 100 分！");
+    }, 120);
+  }
+}
 
-  if(score === 100){
-    setTimeout(()=>alert("训练完成 ✅ 已达到 100 分！你咋那么优秀"), 200);
+/* ======= 下一题 ======= */
+function nextQuestion(){
+  if (!locked) {
+    // 防止没提交就跳题
+    document.getElementById("quickFb").innerHTML = `<span style="color:var(--warn);font-weight:900;">先点“提交本题”再下一题</span>`;
     return;
   }
 
-  setTimeout(loadQuestion, 550);
+  index++;
+  if (index >= QUESTIONS.length){
+    alert(`训练结束 ✅ 你的得分：${score} / 100`);
+    // 可选：重置
+    // index = 0; score = 0; document.getElementById("score").innerText = 0; loadQuestion();
+    return;
+  }
+  loadQuestion();
 }
 
+/* 启动 */
 loadQuestion();
 </script>
-
 </body>
 </html>
-```
