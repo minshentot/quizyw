@@ -1,0 +1,210 @@
+```html
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>诗歌意象训练 Quiz（逐题100题）</title>
+<style>
+body{font-family:"Microsoft YaHei",sans-serif;background:#f5f6fa;text-align:center;padding:40px;}
+.card{background:#fff;padding:30px;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.1);max-width:760px;margin:auto;}
+.score{font-size:20px;font-weight:bold;margin-bottom:10px;}
+.title{font-size:22px;font-weight:bold;margin-bottom:10px;}
+.poem{font-size:18px;margin:18px 0;line-height:1.6;}
+.options{text-align:left;display:inline-block;margin-top:6px;}
+label{display:block;margin:6px 0;}
+button{margin-top:18px;padding:10px 26px;font-size:16px;border:none;border-radius:8px;background:#6c5ce7;color:#fff;cursor:pointer;}
+button:hover{background:#5649c0;}
+.feedback{margin-top:12px;font-size:18px;font-weight:bold;min-height:24px;}
+.small{font-size:13px;color:#666;margin-top:6px;}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="score">得分：<span id="score">0</span> / 100</div>
+  <div class="small">规则：多选；必须与标准答案完全一致才得 1 分；逐题作答。</div>
+
+  <div class="title" id="qnum"></div>
+  <div class="poem" id="question"></div>
+
+  <div class="options" id="options"></div>
+
+  <div class="feedback" id="feedback"></div>
+
+  <button onclick="nextQuestion()">下一题</button>
+</div>
+
+<script>
+const TYPES = [
+  "羁旅思乡诗",
+  "边塞征战诗",
+  "山水田园诗",
+  "咏史怀古诗",
+  "爱情闺怨诗",
+  "咏物言志诗",
+  "送别怀人诗",
+  "爱国忧民诗",
+  "干谒求荐诗",
+  "童真稚趣诗"
+];
+
+const QUESTIONS = [
+  {image:"丁香", poem:"丁香空结雨中愁 —— 李璟《摊破浣溪沙》", answer:["爱情闺怨诗"]},
+  {image:"中原", poem:"王师北定中原日 —— 陆游《示儿》", answer:["爱国忧民诗"]},
+  {image:"乌衣巷", poem:"旧时王谢堂前燕 —— 刘禹锡《乌衣巷》", answer:["咏史怀古诗"]},
+  {image:"冯唐", poem:"何日遣冯唐 —— 苏轼《江城子·密州出猎》", answer:["干谒求荐诗","咏史怀古诗"]},
+  {image:"剑", poem:"十年磨一剑 —— 贾岛《剑客》", answer:["边塞征战诗","爱国忧民诗"]},
+  {image:"华清池", poem:"春寒赐浴华清池 —— 白居易《长恨歌》", answer:["咏史怀古诗"]},
+  {image:"卖炭翁", poem:"可怜身上衣正单，心忧炭贱愿天寒 —— 白居易《卖炭翁》", answer:["爱国忧民诗"]},
+  {image:"南山", poem:"悠然见南山 —— 陶渊明《饮酒》", answer:["山水田园诗"]},
+  {image:"南浦", poem:"南浦凄凄别 —— 白居易《南浦别》", answer:["送别怀人诗"]},
+  {image:"双鲤", poem:"中有尺素书 ——《饮马长城窟行》", answer:["爱情闺怨诗","羁旅思乡诗"]},
+  {image:"台城", poem:"无情最是台城柳 —— 韦庄《台城》", answer:["咏史怀古诗"]},
+  {image:"后庭花", poem:"隔江犹唱后庭花 —— 杜牧《泊秦淮》", answer:["咏史怀古诗"]},
+  {image:"商女", poem:"商女不知亡国恨 —— 杜牧《泊秦淮》", answer:["咏史怀古诗"]},
+  {image:"团扇", poem:"弃捐箧笥中 —— 班婕妤《怨歌行》", answer:["爱情闺怨诗"]},
+  {image:"垂钓", poem:"坐观垂钓者，徒有羡鱼情 —— 孟浩然《望洞庭湖赠张丞相》", answer:["山水田园诗","干谒求荐诗"]},
+  {image:"垂髫/黄发", poem:"黄发垂髫，并怡然自乐 —— 陶渊明《桃花源记》", answer:["童真稚趣诗","山水田园诗"]},
+  {image:"墟里烟", poem:"依依墟里烟 —— 陶渊明《归园田居》", answer:["山水田园诗"]},
+  {image:"孤帆/归帆", poem:"孤帆远影碧空尽 —— 李白《黄鹤楼送孟浩然之广陵》", answer:["送别怀人诗","羁旅思乡诗"]},
+  {image:"孤烟", poem:"大漠孤烟直 —— 王维《使至塞上》", answer:["边塞征战诗"]},
+  {image:"孤舟", poem:"孤舟蓑笠翁，独钓寒江雪 —— 柳宗元《江雪》", answer:["羁旅思乡诗","山水田园诗"]},
+  {image:"寒雪", poem:"孤舟蓑笠翁，独钓寒江雪 —— 柳宗元《江雪》", answer:["羁旅思乡诗","咏物言志诗"]},
+  {image:"山河", poem:"山河破碎风飘絮 —— 文天祥《过零丁洋》", answer:["爱国忧民诗"]},
+  {image:"弓刀", poem:"欲将轻骑逐，大雪满弓刀 —— 卢纶《塞下曲》", answer:["边塞征战诗"]},
+  {image:"折柳", poem:"此夜曲中闻折柳，何人不起故园情 —— 李白《春夜洛城闻笛》", answer:["送别怀人诗","羁旅思乡诗"]},
+  {image:"星/银河", poem:"迢迢牵牛星，皎皎河汉女 ——《古诗十九首》", answer:["爱情闺怨诗","羁旅思乡诗"]},
+  {image:"春风", poem:"春风不度玉门关 —— 王之涣《凉州词》", answer:["山水田园诗","边塞征战诗"]},
+  {image:"月", poem:"举头望明月，低头思故乡 —— 李白《静夜思》", answer:["羁旅思乡诗","爱情闺怨诗"]},
+  {image:"朱门", poem:"朱门酒肉臭，路有冻死骨 —— 杜甫《自京赴奉先县咏怀五百字》", answer:["爱国忧民诗"]},
+  {image:"李广", poem:"但使龙城飞将在 —— 王昌龄《出塞》", answer:["边塞征战诗","咏史怀古诗"]},
+  {image:"杜鹃", poem:"杨花落尽子规啼 —— 李白《闻王昌龄左迁龙标遥有此寄》", answer:["羁旅思乡诗","爱情闺怨诗"]},
+  {image:"松", poem:"大雪压青松，青松挺且直 —— 陈毅《青松》", answer:["咏物言志诗"]},
+  {image:"柳", poem:"客舍青青柳色新 —— 王维《送元二使安西》", answer:["送别怀人诗","爱情闺怨诗"]},
+  {image:"柴门", poem:"柴门闻犬吠 —— 刘长卿《逢雪宿芙蓉山主人》", answer:["山水田园诗"]},
+  {image:"栏杆", poem:"怒发冲冠，凭栏处 —— 岳飞《满江红》", answer:["爱国忧民诗","爱情闺怨诗"]},
+  {image:"梅", poem:"遥知不是雪，为有暗香来 —— 王安石《梅花》", answer:["咏物言志诗","爱情闺怨诗"]},
+  {image:"梧桐", poem:"寂寞梧桐深院锁清秋 —— 李煜《相见欢》", answer:["爱情闺怨诗","羁旅思乡诗"]},
+  {image:"楼兰", poem:"不破楼兰终不还 —— 王昌龄《从军行》", answer:["边塞征战诗"]},
+  {image:"歧路", poem:"无为在歧路，儿女共沾巾 —— 王勃《送杜少府之任蜀州》", answer:["送别怀人诗"]},
+  {image:"比翼鸟/连理枝", poem:"在天愿作比翼鸟，在地愿为连理枝 —— 白居易《长恨歌》", answer:["爱情闺怨诗"]},
+  {image:"泪痕", poem:"物是人非事事休，欲语泪先流 —— 李清照《武陵春》", answer:["爱情闺怨诗","羁旅思乡诗"]},
+  {image:"流水/江水", poem:"恰似一江春水向东流 —— 李煜《虞美人》", answer:["羁旅思乡诗","爱情闺怨诗","咏史怀古诗"]},
+  {image:"浮萍", poem:"身世浮沉雨打萍 —— 文天祥《过零丁洋》", answer:["羁旅思乡诗","爱国忧民诗"]},
+  {image:"渔父/渔翁", poem:"青箬笠，绿蓑衣 —— 张志和《渔歌子》", answer:["山水田园诗"]},
+  {image:"渡口", poem:"渡头余落日，墟里上孤烟 —— 王维《辋川闲居赠裴秀才迪》", answer:["送别怀人诗","羁旅思乡诗"]},
+  {image:"湘妃竹/斑竹", poem:"斑竹枝，斑竹枝，泪痕点点寄相思 —— 刘禹锡《潇湘神》", answer:["爱情闺怨诗"]},
+  {image:"烛/蜡炬", poem:"蜡炬成灰泪始干 —— 李商隐《无题》", answer:["爱情闺怨诗","咏物言志诗"]},
+  {image:"烟雨", poem:"南朝四百八十寺，多少楼台烟雨中 —— 杜牧《江南春》", answer:["咏史怀古诗","羁旅思乡诗"]},
+  {image:"烽火", poem:"烽火连三月，家书抵万金 —— 杜甫《春望》", answer:["边塞征战诗","爱国忧民诗"]},
+  {image:"燕", poem:"旧时王谢堂前燕 —— 刘禹锡《乌衣巷》", answer:["咏史怀古诗"]},
+  {image:"燕然", poem:"都护在燕然 —— 王维《使至塞上》", answer:["边塞征战诗"]},
+  {image:"献赋", poem:"献赋十年犹未遇 —— 钱起《赠阙下裴舍人》", answer:["干谒求荐诗"]},
+  {image:"猿", poem:"两岸猿声啼不住 —— 李白《早发白帝城》", answer:["羁旅思乡诗"]},
+  {image:"玉", poem:"一片冰心在玉壶 —— 王昌龄《芙蓉楼送辛渐》", answer:["咏物言志诗","送别怀人诗"]},
+  {image:"玉簟", poem:"红藕香残玉簟秋 —— 李清照《一剪梅》", answer:["爱情闺怨诗"]},
+  {image:"玉门关", poem:"春风不度玉门关 —— 王之涣《凉州词》", answer:["边塞征战诗","羁旅思乡诗"]},
+  {image:"琴", poem:"欲取鸣琴弹，恨无知音赏 —— 孟浩然《夏日南亭怀辛大》", answer:["山水田园诗","送别怀人诗"]},
+  {image:"画眉", poem:"画眉深浅入时无 —— 朱庆馀《近试上张水部》", answer:["爱情闺怨诗"]},
+  {image:"登高", poem:"遥知兄弟登高处 —— 王维《九月九日忆山东兄弟》", answer:["羁旅思乡诗","爱国忧民诗"]},
+  {image:"登龙门", poem:"登龙门（典故：得引荐、身价倍增）", answer:["干谒求荐诗"]},
+  {image:"石壕", poem:"暮投石壕村，有吏夜捉人 —— 杜甫《石壕吏》", answer:["爱国忧民诗"]},
+  {image:"砧声/捣衣", poem:"长安一片月，万户捣衣声 —— 李白《子夜吴歌》", answer:["爱情闺怨诗","边塞征战诗"]},
+  {image:"秋风", poem:"自古逢秋悲寂寥 —— 刘禹锡《秋词》", answer:["羁旅思乡诗","爱情闺怨诗"]},
+  {image:"空山", poem:"空山不见人 —— 王维《鹿柴》", answer:["山水田园诗"]},
+  {image:"竹", poem:"咬定青山不放松 —— 郑燮《竹石》", answer:["咏物言志诗","山水田园诗"]},
+  {image:"笛", poem:"羌笛何须怨杨柳 —— 王之涣《凉州词》", answer:["羁旅思乡诗","边塞征战诗"]},
+  {image:"红豆", poem:"此物最相思 —— 王维《相思》", answer:["爱情闺怨诗","送别怀人诗"]},
+  {image:"胡马", poem:"不教胡马度阴山 —— 王昌龄《出塞》", answer:["边塞征战诗"]},
+  {image:"芭蕉", poem:"雨打芭蕉（常见意象；教学归入“愁思”）", answer:["爱情闺怨诗","羁旅思乡诗"]},
+  {image:"芳草", poem:"离离原上草，一岁一枯荣 —— 白居易《赋得古原草送别》", answer:["送别怀人诗","羁旅思乡诗"]},
+  {image:"莲", poem:"出淤泥而不染 —— 周敦颐《爱莲说》", answer:["咏物言志诗","爱情闺怨诗"]},
+  {image:"莲蓬", poem:"最喜小儿亡赖，溪头卧剥莲蓬 —— 辛弃疾《清平乐·村居》", answer:["童真稚趣诗"]},
+  {image:"菊", poem:"采菊东篱下，悠然见南山 —— 陶渊明《饮酒》", answer:["山水田园诗","咏物言志诗"]},
+  {image:"落日/夕阳", poem:"浮云游子意，落日故人情 —— 李白《送友人》", answer:["送别怀人诗","羁旅思乡诗"]},
+  {image:"葡萄酒/夜光杯", poem:"葡萄美酒夜光杯 —— 王翰《凉州词》", answer:["边塞征战诗"]},
+  {image:"蚕妇", poem:"遍身罗绮者，不是养蚕人 —— 张俞《蚕妇》", answer:["爱国忧民诗"]},
+  {image:"蝉", poem:"居高声自远，非是藉秋风 —— 虞世南《蝉》", answer:["咏物言志诗"]},
+  {image:"西楼月", poem:"月满西楼（李清照词意象）", answer:["爱情闺怨诗"]},
+  {image:"诸葛/出师", poem:"出师未捷身先死 —— 杜甫《蜀相》", answer:["咏史怀古诗","爱国忧民诗"]},
+  {image:"贾生", poem:"不问苍生问鬼神 —— 李商隐《贾生》", answer:["咏史怀古诗","干谒求荐诗"]},
+  {image:"赤壁", poem:"东风不与周郎便 —— 杜牧《赤壁》", answer:["咏史怀古诗"]},
+  {image:"遗民", poem:"遗民泪尽胡尘里 —— 陆游《秋夜将晓出篱门迎凉有感》", answer:["爱国忧民诗"]},
+  {image:"酒", poem:"劝君更尽一杯酒 —— 王维《送元二使安西》", answer:["送别怀人诗","羁旅思乡诗"]},
+  {image:"金甲", poem:"黄沙百战穿金甲 —— 王昌龄《从军行》", answer:["边塞征战诗"]},
+  {image:"金铜仙人", poem:"李贺《金铜仙人辞汉歌》（怀古代表意象）", answer:["咏史怀古诗"]},
+  {image:"金陵", poem:"金陵王气黯然收（兴亡意象）", answer:["咏史怀古诗"]},
+  {image:"金马门", poem:"金马玉堂（典故：待诏求荐意象）", answer:["干谒求荐诗"]},
+  {image:"铁马冰河", poem:"铁马冰河入梦来 —— 陆游《十一月四日风雨大作》", answer:["爱国忧民诗","边塞征战诗"]},
+  {image:"铜雀台", poem:"铜雀春深锁二乔 —— 杜牧《赤壁》", answer:["咏史怀古诗"]},
+  {image:"锦书/尺素", poem:"云中谁寄锦书来 —— 李清照《一剪梅》", answer:["爱情闺怨诗","羁旅思乡诗"]},
+  {image:"长亭", poem:"长亭外，古道边 —— 李叔同《送别》", answer:["送别怀人诗"]},
+  {image:"阳关", poem:"西出阳关无故人 —— 王维《送元二使安西》", answer:["送别怀人诗","边塞征战诗"]},
+  {image:"雁", poem:"乡书何处达？归雁洛阳边 —— 王湾《次北固山下》", answer:["羁旅思乡诗","送别怀人诗"]},
+  {image:"青鸟", poem:"青鸟殷勤为探看 —— 李商隐《无题》", answer:["爱情闺怨诗"]},
+  {image:"马嵬", poem:"马嵬坡下泥土中 —— 白居易《长恨歌》", answer:["咏史怀古诗","爱情闺怨诗"]},
+  {image:"高楼/西楼", poem:"无言独上西楼，月如钩 —— 李煜《相见欢》", answer:["爱情闺怨诗","羁旅思乡诗"]},
+  {image:"鸦", poem:"枯藤老树昏鸦 —— 马致远《天净沙·秋思》", answer:["羁旅思乡诗"]},
+  {image:"鹤", poem:"晴空一鹤排云上 —— 刘禹锡《秋词》", answer:["山水田园诗","咏物言志诗"]},
+  {image:"鹧鸪", poem:"江晚正愁余，山深闻鹧鸪 —— 辛弃疾《菩萨蛮·书江西造口壁》", answer:["羁旅思乡诗","送别怀人诗"]},
+  {image:"鹭", poem:"一行白鹭上青天 —— 杜甫《绝句》", answer:["山水田园诗"]},
+  {image:"黄沙", poem:"黄沙百战穿金甲 —— 王昌龄《从军行》", answer:["边塞征战诗"]}
+];
+
+if (QUESTIONS.length !== 100) {
+  alert("⚠ 题目数量不是100题，请检查 QUESTIONS！");
+}
+
+let index = 0;
+let score = 0;
+
+function renderOptions(){
+  const optionsDiv = document.getElementById("options");
+  let html = "";
+  TYPES.forEach(t => {
+    html += `<label><input type="checkbox" value="${t}"> ${t}</label>`;
+  });
+  optionsDiv.innerHTML = html;
+}
+
+function loadQuestion(){
+  if(index >= QUESTIONS.length){
+    alert("训练结束 ✅ 你的得分：" + score + " / 100");
+    return;
+  }
+  const q = QUESTIONS[index];
+  document.getElementById("qnum").innerText = "第 " + (index + 1) + " 题";
+  document.getElementById("question").innerHTML = "【意象：" + q.image + "】<br>" + q.poem;
+  document.getElementById("feedback").innerText = "";
+  renderOptions();
+}
+
+function nextQuestion(){
+  const q = QUESTIONS[index];
+  const checked = [...document.querySelectorAll("input:checked")].map(x => x.value).sort();
+  const correct = [...q.answer].sort();
+
+  if(JSON.stringify(checked) === JSON.stringify(correct)){
+    score++;
+    document.getElementById("feedback").innerText = "✅ 正确 +1";
+  } else {
+    document.getElementById("feedback").innerText = "❌ 错误（本题不得分）";
+  }
+
+  document.getElementById("score").innerText = score;
+  index++;
+
+  if(score === 100){
+    setTimeout(()=>alert("训练完成 ✅ 已达到 100 分！你咋那么优秀"), 200);
+    return;
+  }
+
+  setTimeout(loadQuestion, 550);
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
+```
